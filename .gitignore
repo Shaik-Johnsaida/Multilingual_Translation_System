@@ -1,0 +1,43 @@
+# Python Caches & Compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+include/
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Media Outputs & Temporary Files
+outputs/*
+!outputs/.gitkeep
+
+# Uploads & Temporary Input Files
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# System & OS Files
+.DS_Store
+Thumbs.db
+
+# Database & Logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+*.csv

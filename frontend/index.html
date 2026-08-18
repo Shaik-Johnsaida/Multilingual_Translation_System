@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Multilingual Audio Dubbing & Subtitle Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 8l6 6M4 14e0l6-6M2 5h12M7 2v3M22 22l-5-10-5 10M14 18h6"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Universal Multilingual Audio Dubbing & Subtitle Generator</h1>
+                    <p class="brand-subtitle">AI Audio-Visual Dubbing + Subtitle Engine (10 Production Languages)</p>
+                </div>
+            </div>
+            <div class="header-badge" id="engine-status-badge">
+                <span class="status-dot green pulse"></span>
+                <span id="badge-text">Local AI Engine Ready (Zero API Keys)</span>
+            </div>
+        </header>
+
+        <!-- Main Workspace Tabs -->
+        <nav class="mode-nav">
+            <button class="nav-btn active" data-tab="text-mode">
+                <span class="btn-icon">💬</span> Text Mode
+            </button>
+            <button class="nav-btn" data-tab="audio-mode">
+                <span class="btn-icon">🎙️</span> Audio Dubbing & Translation
+            </button>
+            <button class="nav-btn" data-tab="video-mode">
+                <span class="btn-icon">🎬</span> Video Dubbing & Subtitles
+            </button>
+            <button class="nav-btn" data-tab="languages-mode">
+                <span class="btn-icon">🌐</span> Supported Languages (10)
+            </button>
+            <button class="nav-btn" data-tab="history-mode">
+                <span class="btn-icon">📜</span> History
+            </button>
+        </nav>
+
+        <!-- Main Dashboard Viewport -->
+        <main class="dashboard-content">
+
+            <!-- TAB 1: UNIVERSAL TEXT TRANSLATOR -->
+            <section id="text-mode" class="tab-panel active">
+                <div class="translator-grid">
+                    <!-- Source Panel -->
+                    <div class="translator-card source-card">
+                        <div class="card-header">
+                            <label for="text-src-lang">SOURCE LANGUAGE</label>
+                            <div class="select-wrapper">
+                                <select id="text-src-lang" class="lang-select">
+                                    <option value="auto">Auto Detect</option>
+                                </select>
+                            </div>
+                        </div>
+                        <textarea id="text-input" placeholder="Type or paste text to translate... (e.g. English, Telugu, Hindi, Spanish, French, Japanese, Chinese, Urdu, Tamil, Malayalam)" rows="8"></textarea>
+                        <div class="card-footer">
+                            <span id="char-count">0 / 5000 characters</span>
+                            <button id="btn-clear-text" class="btn-secondary-sm">Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- Swap Control -->
+                    <div class="swap-divider">
+                        <button id="btn-swap-lang" class="btn-swap" title="Swap Source & Target Languages">⇅</button>
+                    </div>
+
+                    <!-- Target Panel -->
+                    <div class="translator-card target-card">
+                        <div class="card-header">
+                            <label for="text-tgt-lang">TARGET LANGUAGE</label>
+                            <div class="select-wrapper">
+                                <select id="text-tgt-lang" class="lang-select">
+                                    <!-- Options loaded dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div id="text-output-display" class="translation-output-box">
+                            <span class="placeholder-text">Translation output will appear here...</span>
+                        </div>
+                        <div class="card-footer">
+                            <span id="model-meta-info" class="meta-tag">Model: NLLB-200 (Local)</span>
+                            <button id="btn-copy-text" class="btn-secondary-sm">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button id="btn-translate-text" class="btn-primary-lg">
+                        <span>Translate Now</span>
+                    </button>
+                </div>
+            </section>
+
+
+            <!-- TAB 2: AUDIO TRANSLATION & DUBBING -->
+            <section id="audio-mode" class="tab-panel">
+                <div class="panel-card">
+                    <div class="card-header">
+                        <h2>Audio Transcription, Translation & Dubbing</h2>
+                    </div>
+                    <div class="upload-dropzone" id="audio-dropzone">
+                        <input type="file" id="audio-file-input" accept="audio/*" hidden>
+                        <div class="upload-icon">🎵</div>
+                        <h3>Upload Audio File (MP3, WAV, M4A, FLAC)</h3>
+                        <p>Speech recognition, VAD, translation & target language voice synthesis</p>
+                        <button class="btn-primary-sm" onclick="document.getElementById('audio-file-input').click()">Select Audio File</button>
+                        <span id="audio-file-name" class="file-badge"></span>
+                    </div>
+
+                    <!-- Original Audio Player -->
+                    <div id="audio-orig-player-container" class="hidden" style="margin-top: 15px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px;">
+                        <h4 style="margin-bottom: 8px; color: var(--text-muted);">Original Audio Input:</h4>
+                        <audio id="audio-orig-player" controls style="width: 100%;"></audio>
+                    </div>
+
+                    <div class="media-controls-row">
+                        <div class="control-group">
+                            <label>Source Language:</label>
+                            <select id="audio-src-lang" class="lang-select"></select>
+                        </div>
+                        <div class="control-group">
+                            <label>Target Language:</label>
+                            <select id="audio-tgt-lang" class="lang-select"></select>
+                        </div>
+                        <button id="btn-process-audio" class="btn-primary-md">Start Audio Dubbing</button>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div id="audio-progress-container" class="progress-container hidden">
+                        <div class="progress-header">
+                            <span id="audio-stage-text">Processing Stage...</span>
+                            <span id="audio-pct-text">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="audio-progress-fill" class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Output Display -->
+                    <div id="audio-results" class="results-grid hidden">
+                        <div class="result-block">
+                            <h3>Original Speech Transcript (Whisper STT)</h3>
+                            <div id="audio-orig-transcript" class="transcript-box"></div>
+                        </div>
+                        <div class="result-block">
+                            <h3>Translated Speech & Dubbed Audio</h3>
+                            <div id="audio-trans-transcript" class="transcript-box" style="margin-bottom: 12px;"></div>
+                            <h4>Translated Audio Player:</h4>
+                            <audio id="audio-dubbed-player" controls style="width: 100%; margin-top: 8px;"></audio>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- TAB 3: VIDEO DUBBING & SUBTITLE GENERATOR -->
+            <section id="video-mode" class="tab-panel">
+                <div class="panel-card">
+                    <div class="card-header">
+                        <h2>Video Audio Dubbing & Subtitle Overlay Engine</h2>
+                    </div>
+
+                    <div class="upload-dropzone" id="video-dropzone">
+                        <input type="file" id="video-file-input" accept="video/*" hidden>
+                        <div class="upload-icon">🎥</div>
+                        <h3>Upload Video File (MP4, MKV, AVI, MOV)</h3>
+                        <p>Audio extraction, Whisper STT, translation, target audio dubbing, and FFmpeg video subtitle overlay</p>
+                        <button class="btn-primary-sm" onclick="document.getElementById('video-file-input').click()">Select Video File</button>
+                        <span id="video-file-name" class="file-badge"></span>
+                    </div>
+
+                    <!-- Original Video Player -->
+                    <div id="video-orig-player-container" class="hidden" style="margin-top: 15px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px;">
+                        <h4 style="margin-bottom: 8px; color: var(--text-muted);">Original Video Input:</h4>
+                        <video id="video-orig-player" controls width="100%" style="border-radius: 6px; max-height: 300px;"></video>
+                    </div>
+
+                    <div class="media-controls-row">
+                        <div class="control-group">
+                            <label>Source Language:</label>
+                            <select id="video-src-lang" class="lang-select"></select>
+                        </div>
+                        <div class="control-group">
+                            <label>Target Language:</label>
+                            <select id="video-tgt-lang" class="lang-select"></select>
+                        </div>
+                        <button id="btn-process-video" class="btn-primary-md">Generate Dubbed Video & Subtitles</button>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div id="video-progress-container" class="progress-container hidden">
+                        <div class="progress-header">
+                            <span id="video-stage-text">Initializing Video Pipeline...</span>
+                            <span id="video-pct-text">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="video-progress-fill" class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Video Preview & Downloads -->
+                    <div id="video-results" class="results-layout hidden">
+                        <div class="video-preview-card">
+                            <h3>Translated Video Preview (Synchronized Target Dubbing + Subtitles)</h3>
+                            <div class="video-player-container">
+                                <video id="video-player" controls width="100%">
+                                    <source id="video-source" src="" type="video/mp4">
+                                    Your browser does not support HTML5 video.
+                                </video>
+                            </div>
+                        </div>
+
+                        <div class="subtitle-side-panel">
+                            <h3>Synchronized Subtitle Frames</h3>
+                            <div id="subtitle-list" class="subtitle-scroll-list"></div>
+
+                            <div class="download-button-group">
+                                <button id="btn-dl-srt" class="btn-dl">📥 Download SRT (.srt)</button>
+                                <button id="btn-dl-vtt" class="btn-dl">📥 Download WebVTT (.vtt)</button>
+                                <button id="btn-dl-csv" class="btn-dl">📥 Download CSV Log (.csv)</button>
+                                <button id="btn-dl-video" class="btn-dl btn-highlight">🎬 Download Translated Dubbed Video (.mp4)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- TAB 4: SUPPORTED LANGUAGES (10) -->
+            <section id="languages-mode" class="tab-panel">
+                <div class="panel-card">
+                    <div class="card-header">
+                        <h2>Supported Production Languages (Exactly 10)</h2>
+                        <input type="text" id="search-lang-matrix" placeholder="🔍 Search language or code..." class="search-input">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Language Name</th>
+                                    <th>FLORES / Code</th>
+                                    <th>Script</th>
+                                    <th>Text Translation</th>
+                                    <th>Speech Recognition</th>
+                                    <th>Audio Dubbing</th>
+                                    <th>Subtitles</th>
+                                </tr>
+                            </thead>
+                            <tbody id="languages-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- TAB 5: TRANSLATION HISTORY -->
+            <section id="history-mode" class="tab-panel">
+                <div class="panel-card">
+                    <div class="card-header">
+                        <h2>Translation & Dubbing History Log</h2>
+                        <button id="btn-refresh-history" class="btn-secondary-sm">Refresh</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Mode</th>
+                                    <th>Source -> Target</th>
+                                    <th>Original Text</th>
+                                    <th>Translated Text</th>
+                                    <th>Model</th>
+                                    <th>Time (s)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
